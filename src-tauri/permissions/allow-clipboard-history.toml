@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "allow-clipboard-history"
+description = "Allows reading persisted clipboard history on startup."
+commands.allow = ["get_clipboard_history"]

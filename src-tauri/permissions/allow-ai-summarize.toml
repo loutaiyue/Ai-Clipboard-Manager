@@ -1,0 +1,4 @@
+[[permission]]
+identifier = "allow-ai-summarize"
+description = "Allows the frontend to invoke ai_summarize for OpenAI-compatible chat completions."
+commands.allow = ["ai_summarize"]

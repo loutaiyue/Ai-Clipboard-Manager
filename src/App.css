@@ -1,0 +1,390 @@
+/* Transparent root so Windows 11 Mica shows through the webview */
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  background: transparent;
+}
+
+:root {
+  color-scheme: dark;
+  --bg-layer: rgba(36, 38, 44, 0.42);
+  --bg-layer-strong: rgba(32, 34, 40, 0.58);
+  --bg-elevated: rgba(48, 50, 58, 0.55);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text-primary: rgba(255, 255, 255, 0.96);
+  --text-secondary: rgba(255, 255, 255, 0.66);
+  --text-tertiary: rgba(255, 255, 255, 0.45);
+  --accent: #60cdff;
+  --accent-2: #b388ff;
+  --accent-soft: rgba(96, 205, 255, 0.2);
+  --radius-lg: 14px;
+  --radius-md: 9px;
+  --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 40px rgba(96, 205, 255, 0.08);
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-root {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+}
+
+/* 深色半透明渐变 + 微光，与系统 Mica 叠加以增强层次 */
+.shell-glow {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 70% at 0% -10%, rgba(96, 205, 255, 0.22), transparent 52%),
+    radial-gradient(ellipse 80% 60% at 100% 110%, rgba(179, 136, 255, 0.16), transparent 48%),
+    radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255, 255, 255, 0.04), transparent 62%),
+    linear-gradient(168deg, rgba(14, 16, 22, 0.72) 0%, rgba(22, 24, 30, 0.45) 45%, rgba(18, 20, 26, 0.65) 100%);
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  min-height: 100%;
+  display: flex;
+  padding: 18px;
+  gap: 16px;
+  color: var(--text-primary);
+}
+
+.sidebar {
+  width: min(320px, 36vw);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-layer-strong);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+  backdrop-filter: blur(56px) saturate(1.35);
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.app-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.app-subtitle {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.history-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.history-empty {
+  padding: 20px 12px;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.history-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 10px 12px;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.12s ease;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.history-item.is-active {
+  background: var(--accent-soft);
+  border-color: rgba(96, 205, 255, 0.42);
+  box-shadow:
+    0 0 0 1px rgba(96, 205, 255, 0.15),
+    0 6px 22px rgba(96, 205, 255, 0.12);
+}
+
+.history-time {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+.history-preview {
+  font-size: 13px;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+.preview-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-layer-strong);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft), var(--shadow-glow);
+  backdrop-filter: blur(56px) saturate(1.35);
+  overflow: hidden;
+}
+
+.preview-header {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.preview-header-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.preview-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.preview-hint {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 56ch;
+}
+
+.preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.22s ease,
+    color 0.15s ease,
+    transform 0.12s ease,
+    filter 0.15s ease;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-primary {
+  color: #0a0a0c;
+  background: linear-gradient(180deg, #7fdfff 0%, #4ebfff 48%, #3aa8e6 100%);
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow:
+    0 0 0 1px rgba(96, 205, 255, 0.25),
+    0 6px 20px rgba(0, 160, 255, 0.28);
+}
+
+.btn-primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+  border-color: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(96, 205, 255, 0.45),
+    0 10px 28px rgba(0, 180, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  filter: brightness(0.98);
+}
+
+.btn-ghost {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-subtle);
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  transform: translateY(-1px);
+}
+
+.btn-ghost:active {
+  transform: translateY(0);
+}
+
+.settings-panel {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border-subtle);
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
+.field-input {
+  font: inherit;
+  font-size: 13px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-primary);
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.2s ease,
+    background 0.15s ease;
+}
+
+.field-input:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.field-input:focus {
+  border-color: rgba(96, 205, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(96, 205, 255, 0.15);
+}
+
+.preview-body {
+  flex: 1;
+  padding: 16px 20px 22px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preview-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  font-size: 12px;
+}
+
+.meta-label {
+  color: var(--text-tertiary);
+}
+
+.meta-value {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+.preview-text {
+  margin: 0;
+  padding: 14px 16px;
+  flex: 0 1 auto;
+  min-height: 100px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  font-family: "Cascadia Code", "Consolas", ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-primary);
+}
+
+.preview-text--summary {
+  border-color: rgba(179, 136, 255, 0.28);
+  background: rgba(88, 72, 120, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.preview-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: #ffb4b4;
+  background: rgba(180, 40, 40, 0.2);
+  border: 1px solid rgba(255, 120, 120, 0.25);
+}
+
+.preview-placeholder {
+  margin: 0;
+  padding: 32px 16px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
