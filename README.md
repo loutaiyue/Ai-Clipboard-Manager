@@ -17,7 +17,7 @@
 
 ## 📸 软件预览
 
-> [此处建议上传你在 Cursor 中运行软件的截图，替换下方占位符]
+
 ![Software Screenshot](https://raw.githubusercontent.com/loutaiyue/AI-Clipboard-Manager/main/assets/screenshot.png)
 
 ## 🛠️ 技术栈
